@@ -79,20 +79,20 @@
       padding: 20px;
       border-radius: 8px;
       text-align: center;
-      margin: 20px auto;
+      margin: 30px auto;
       max-width: 500px;
       box-shadow: 0 4px 20px rgba(0,0,0,0.3);
     }
     
     .timer-title {
-      font-size: 1.5rem;
-      margin-bottom: 10px;
+      font-size: 3.5rem;
+      margin-bottom: -25px;
       color: var(--text);
     }
     
     .timer span {
       color: var(--accent);
-      font-size: 2rem;
+      font-size: 5rem;
       font-weight: 600;
     }
     
@@ -104,6 +104,7 @@
     .section-title {
       font-size: 2rem;
       margin-bottom: 40px;
+      margin-top: -55px;
       text-align: center;
       position: relative;
     }
@@ -244,6 +245,10 @@
       margin-bottom: 15px;
     }
     
+    .claim-title {
+      margin-top: 0px !important;
+    }
+    
     @media (max-width: 768px) {
       .header h1 {
         font-size: 2rem;
@@ -259,6 +264,7 @@
       
       .offer-text {
         font-size: 1.1rem;
+        margin: 0 auto 0px;
       }
     }
   </style>
@@ -267,7 +273,7 @@
   <header class="header">
     <div class="container">
       <h1>48-HOUR FLASH SALE<br><span>Get Your Business Online for 75% OFF</span></h1>
-      <p class="price-highlight">Professional one-page website</p>
+      <h1>Professional one-page website</h1>
       <p><span class="original-price">Normally $997</span> <strong>today just $249</strong></p>
       <a href="#order" class="cta-button">CLAIM YOUR DISCOUNT NOW</a>
     </div>
@@ -275,7 +281,7 @@
 
   <div class="container">
     <div class="timer">
-      <div class="timer-title">Sale Ends</div>
+      <div class="timer-title"><strong> Sale Ends</strong></div>
       <span id="countdown">48:00:00</span>
     </div>
 
@@ -358,8 +364,9 @@
 
     <section id="order" class="section">
       <div class="form-container">
-        <h2 class="section-title">Claim Your Discount</h2>
-        <p class="text-center mb-40">Complete this form to claim your 75% discount before time runs out:</p>
+        <h2 class="section-title claim-title">Claim Your Discount</h2>
+        <p class="text-center mb-40">Claim your 75% discount before time runs out:</p>
+        
         <form>
           <div class="form-group">
             <input type="text" placeholder="Your Name" required>
