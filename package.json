@@ -1,0 +1,11 @@
+{
+  "name": "flash-sale-landing",
+  "version": "1.0.0",
+  "scripts": {
+    "preview": "vite preview",
+    "dev": "vite"
+  },
+  "devDependencies": {
+    "vite": "^4.4.9"
+  }
+}
