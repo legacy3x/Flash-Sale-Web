@@ -16,9 +16,47 @@ Deno.serve(async (req: Request) => {
   }
 
   try {
+    // Check for required environment variables
+    const supabaseUrl = Deno.env.get('SUPABASE_URL');
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+    const stripeSecretKey = Deno.env.get('STRIPE_SECRET_KEY');
+
+    if (!supabaseUrl) {
+      console.error('Missing SUPABASE_URL environment variable');
+      return new Response(
+        JSON.stringify({ error: 'Server configuration error: Missing SUPABASE_URL environment variable' }),
+        {
+          status: 500,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        }
+      );
+    }
+
+    if (!supabaseServiceKey) {
+      console.error('Missing SUPABASE_SERVICE_ROLE_KEY environment variable');
+      return new Response(
+        JSON.stringify({ error: 'Server configuration error: Missing SUPABASE_SERVICE_ROLE_KEY environment variable' }),
+        {
+          status: 500,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        }
+      );
+    }
+
+    if (!stripeSecretKey) {
+      console.error('Missing STRIPE_SECRET_KEY environment variable');
+      return new Response(
+        JSON.stringify({ error: 'Server configuration error: Missing STRIPE_SECRET_KEY environment variable' }),
+        {
+          status: 500,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        }
+      );
+    }
+
     const supabase = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+      supabaseUrl,
+      supabaseServiceKey
     );
 
     const { data: config, error: configError } = await supabase
@@ -66,7 +104,7 @@ Deno.serve(async (req: Request) => {
 
     const priceInCents = Math.round(currentPrice * 100);
 
-    const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY') ?? '', {
+    const stripe = new Stripe(stripeSecretKey, {
       apiVersion: '2023-10-16',
     });
 
