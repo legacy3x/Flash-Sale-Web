@@ -492,12 +492,42 @@
           const result = await response.json();
 
           if (response.ok) {
-            this.innerHTML = `
-              <div style="text-align: center; padding: 40px;">
-                <h3 style="color: var(--accent); margin-bottom: 20px;">Thank You!</h3>
-                <p>Your request has been submitted successfully. We'll contact you within 24 hours to get started on your website.</p>
-              </div>
-            `;
+            // Form submitted successfully, now open Stripe checkout
+            submitButton.textContent = 'OPENING CHECKOUT...';
+            
+            try {
+              const checkoutResponse = await fetch(`https://duwkybdmqumkkjrvtpeh.supabase.co/functions/v1/create-stripe-checkout-session`, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  customerEmail: formData.get('email'),
+                  customerName: formData.get('name')
+                }),
+              });
+
+              const checkoutResult = await checkoutResponse.json();
+
+              if (checkoutResponse.ok && checkoutResult.url) {
+                // Redirect to Stripe Checkout
+                window.location.href = checkoutResult.url;
+              } else {
+                throw new Error(checkoutResult.error || 'Failed to create checkout session');
+              }
+            } catch (checkoutError) {
+              console.error('Checkout error:', checkoutError);
+              
+              // Show success message for form submission but inform about checkout issue
+              this.innerHTML = `
+                <div style="text-align: center; padding: 40px;">
+                  <h3 style="color: var(--accent); margin-bottom: 20px;">Form Submitted Successfully!</h3>
+                  <p style="margin-bottom: 20px;">Your request has been submitted. However, there was an issue opening the checkout.</p>
+                  <p style="margin-bottom: 20px;">Please contact us directly to complete your purchase at the discounted price.</p>
+                  <button onclick="location.reload()" class="cta-button">Try Checkout Again</button>
+                </div>
+              `;
+            }
           } else {
             throw new Error(result.error || 'Submission failed');
           }
