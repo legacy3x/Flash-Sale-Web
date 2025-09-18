@@ -52,13 +52,13 @@ Deno.serve(async (req: Request) => {
 
     if (elapsedHours < config.stage_1_duration_hours) {
       currentPrice = originalPrice * (1 - config.price_stage_1_discount);
-      priceDescription = \`Flash Sale (75% off)`;
+      priceDescription = `Flash Sale (75% off)`;
     } else if (elapsedHours < (config.stage_1_duration_hours + config.stage_2_duration_hours)) {
       currentPrice = originalPrice * (1 - config.price_stage_2_discount);
-      priceDescription = \`Flash Sale (50% off)`;
+      priceDescription = `Flash Sale (50% off)`;
     } else if (elapsedHours < totalSaleDurationHours) {
       currentPrice = originalPrice * (1 - config.price_stage_3_discount);
-      priceDescription = \`Flash Sale (25% off)`;
+      priceDescription = `Flash Sale (25% off)`;
     } else {
       currentPrice = originalPrice;
       priceDescription = "Sale Ended - Original Price";
