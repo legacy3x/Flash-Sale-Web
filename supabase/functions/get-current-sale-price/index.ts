@@ -26,6 +26,7 @@ Deno.serve(async (req: Request) => {
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_ANON_KEY') ?? ''
+    )
     const supabase = createClient(supabaseUrl ?? '', supabaseAnonKey ?? '');
 
     console.log('Attempting to fetch flash_sale_config...');
