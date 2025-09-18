@@ -69,20 +69,44 @@ Deno.serve(async (req: Request) => {
     // Create Supabase client with service role key
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+      {
+        auth: {
+          autoRefreshToken: false,
+          persistSession: false
+        }
+      }
     );
+
+    // Log environment variables for debugging (remove in production)
+    console.log('SUPABASE_URL:', Deno.env.get('SUPABASE_URL') ? 'Set' : 'Missing');
+    console.log('SUPABASE_SERVICE_ROLE_KEY:', Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ? 'Set' : 'Missing');
 
     // Insert form submission into database
     const { data, error } = await supabase
       .from('form_submissions')
-      .insert([submission])
+      .insert([{
+        name: submission.name,
+        email: submission.email,
+        phone: submission.phone,
+        website_description: submission.website_description,
+        status: 'new'
+      }])
       .select()
       .single();
 
     if (error) {
-      console.error('Database error:', error);
+      console.error('Database error details:', {
+        message: error.message,
+        details: error.details,
+        hint: error.hint,
+        code: error.code
+      });
       return new Response(
-        JSON.stringify({ error: 'Failed to save submission' }),
+        JSON.stringify({ 
+          error: 'Failed to save submission',
+          details: error.message 
+        }),
         {
           status: 500,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
