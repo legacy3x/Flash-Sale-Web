@@ -463,31 +463,11 @@
       setInterval(updateUI, 1000);
 
       // Handle Stripe Checkout button click
-      document.getElementById('checkout-button').addEventListener('click', async function() {
-        this.disabled = true;
-        this.textContent = 'Processing...';
-
-        try {
-          const response = await fetch(`https://duwkybdmqumkkjrvtpeh.supabase.co/functions/v1/create-stripe-checkout-session`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          });
-
-          const data = await response.json();
-
-          if (response.ok && data.url) {
-            window.location.href = data.url; // Redirect to Stripe Checkout
-          } else {
-            throw new Error(data.error || 'Failed to create checkout session');
-          }
-        } catch (error) {
-          console.error('Error:', error);
-          alert('There was an error initiating payment. Please try again.');
-          this.disabled = false;
-          this.textContent = 'CLAIM YOUR DISCOUNT NOW';
-        }
+      document.getElementById('checkout-button').addEventListener('click', function() {
+        // Scroll to the form section at the bottom of the page
+        document.getElementById('order').scrollIntoView({ 
+          behavior: 'smooth' 
+        });
       });
 
       // Handle form submission for contact form (separate from Stripe)
