@@ -274,8 +274,8 @@
     <div class="container">
       <h1>48-HOUR FLASH SALE<br><span>Get Your Business Online for 75% OFF</span></h1>
       <h1>Professional one-page website</h1>
-      <p><span class="original-price">Normally $997</span> <strong>today just $249</strong></p>
-      <a href="#order" class="cta-button">CLAIM YOUR DISCOUNT NOW</a>
+      <p><span class="original-price" id="original-price-display"></span> <strong id="current-price"></strong></p>
+      <button id="checkout-button" class="cta-button">CLAIM YOUR DISCOUNT NOW</button>
     </div>
   </header>
 
@@ -311,7 +311,7 @@
       <div class="benefits">
         <div class="benefit-card">
           <h3>✅ Custom Design</h3>
-          <p>Tailored to fit your brand’s style and color scheme.</p>
+          <p>Tailored to fit your brand's style and color scheme.</p>
         </div>
         <div class="benefit-card">
           <h3>✅ Responsive Layout</h3>
@@ -390,75 +390,151 @@
   </div>
 
   <script>
-    // Countdown timer
-    let hours = 48;
-    let minutes = 0;
-    let seconds = 0;
-    
-    function updateTimer() {
-      seconds--;
-      if (seconds < 0) {
-        seconds = 59;
-        minutes--;
-      }
-      if (minutes < 0) {
-        minutes = 59;
-        hours--;
-      }
-      
-      document.getElementById('countdown').textContent = 
-        `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-      
-      if (hours <= 0 && minutes <= 0 && seconds <= 0) {
-        clearInterval(timerInterval);
-        document.getElementById('countdown').textContent = "SALE ENDED!";
-      }
-    }
-    
-    const timerInterval = setInterval(updateTimer, 1000);
-    
-    // Form submission handling
-    document.getElementById('contact-form').addEventListener('submit', async function(e) {
-      e.preventDefault();
-      
-      const submitButton = this.querySelector('button[type="submit"]');
-      const originalText = submitButton.textContent;
-      
-      // Show loading state
-      submitButton.textContent = 'SUBMITTING...';
-      submitButton.disabled = true;
-      
+    let saleConfig = null;
+    let timerInterval;
+
+    async function fetchSaleConfig() {
       try {
-        const formData = new FormData(this);
-        
-        // Replace with your actual Supabase project URL
-        const response = await fetch(`${window.location.origin.includes('localhost') ? 'http://localhost:54321' : 'https://your-project-id.supabase.co'}/functions/v1/submit-form`, {
-          method: 'POST',
-          body: formData,
-        });
-        
-        const result = await response.json();
-        
-        if (response.ok) {
-          // Success - show success message
-          this.innerHTML = `
-            <div style="text-align: center; padding: 40px;">
-              <h3 style="color: var(--accent); margin-bottom: 20px;">Thank You!</h3>
-              <p>Your request has been submitted successfully. We'll contact you within 24 hours to get started on your website.</p>
-            </div>
-          `;
-        } else {
-          throw new Error(result.error || 'Submission failed');
+        // Replace with your actual Supabase project URL and Edge Function path
+        const response = await fetch(`${window.location.origin.includes('localhost') ? 'http://localhost:54321' : 'https://your-project-id.supabase.co'}/functions/v1/get-current-sale-price`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch sale configuration');
+        }
+        saleConfig = await response.json();
+        console.log('Sale Config:', saleConfig);
+        updateUI();
+        if (!timerInterval) {
+          timerInterval = setInterval(updateUI, 1000);
         }
       } catch (error) {
-        console.error('Form submission error:', error);
-        alert('There was an error submitting your form. Please try again or contact us directly.');
-        
-        // Reset button
-        submitButton.textContent = originalText;
-        submitButton.disabled = false;
+        console.error('Error fetching sale config:', error);
+        document.getElementById('countdown').textContent = "Sale Info Unavailable";
+        document.getElementById('current-price').textContent = `$${(999).toFixed(2)}`;
+        document.getElementById('original-price-display').textContent = `Normally $${(999).toFixed(2)}`;
+        document.getElementById('checkout-button').disabled = true;
       }
+    }
+
+    function updateUI() {
+      if (!saleConfig) return;
+
+      const saleStartTime = new Date(saleConfig.saleStartTime);
+      const currentTime = new Date();
+      const totalSaleDurationMs = (saleConfig.config.stage1Duration + saleConfig.config.stage2Duration + saleConfig.config.stage3Duration) * 60 * 60 * 1000;
+      const saleEndTime = new Date(saleStartTime.getTime() + totalSaleDurationMs);
+      const remainingTimeMs = saleEndTime.getTime() - currentTime.getTime();
+
+      const countdownElement = document.getElementById('countdown');
+      const currentPriceElement = document.getElementById('current-price');
+      const originalPriceDisplayElement = document.getElementById('original-price-display');
+      const checkoutButton = document.getElementById('checkout-button');
+
+      originalPriceDisplayElement.textContent = `Normally $${saleConfig.originalPrice}`;
+
+      if (remainingTimeMs <= 0) {
+        countdownElement.textContent = "SALE ENDED!";
+        currentPriceElement.textContent = `$${saleConfig.originalPrice}`;
+        checkoutButton.disabled = true;
+        checkoutButton.textContent = "SALE ENDED";
+        clearInterval(timerInterval);
+      } else {
+        const hours = Math.floor(remainingTimeMs / (1000 * 60 * 60));
+        const minutes = Math.floor((remainingTimeMs % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((remainingTimeMs % (1000 * 60)) / 1000);
+
+        countdownElement.textContent =
+          `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+        currentPriceElement.textContent = `$${saleConfig.currentPrice}`;
+        checkoutButton.disabled = false;
+        checkoutButton.textContent = "CLAIM YOUR DISCOUNT NOW";
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      fetchSaleConfig();
+
+      // Handle Stripe Checkout button click
+      document.getElementById('checkout-button').addEventListener('click', async function() {
+        this.disabled = true;
+        this.textContent = 'Processing...';
+
+        try {
+          // Replace with your actual Supabase project URL and Edge Function path
+          const response = await fetch(`${window.location.origin.includes('localhost') ? 'http://localhost:54321' : 'https://your-project-id.supabase.co'}/functions/v1/create-stripe-checkout-session`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          });
+
+          const data = await response.json();
+
+          if (response.ok && data.url) {
+            window.location.href = data.url; // Redirect to Stripe Checkout
+          } else {
+            throw new Error(data.error || 'Failed to create checkout session');
+          }
+        } catch (error) {
+          console.error('Error:', error);
+          alert('There was an error initiating payment. Please try again.');
+          this.disabled = false;
+          this.textContent = 'CLAIM YOUR DISCOUNT NOW';
+        }
+      });
+
+      // Handle form submission for contact form (separate from Stripe)
+      // This part remains largely the same as before, but ensure it's distinct from the checkout button
+      document.getElementById('contact-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const submitButton = this.querySelector('button[type="submit"]');
+        const originalText = submitButton.textContent;
+
+        submitButton.textContent = 'SUBMITTING...';
+        submitButton.disabled = true;
+
+        try {
+          const formData = new FormData(this);
+
+          const response = await fetch(`${window.location.origin.includes('localhost') ? 'http://localhost:54321' : 'https://your-project-id.supabase.co'}/functions/v1/submit-form`, {
+            method: 'POST',
+            body: formData,
+          });
+
+          const result = await response.json();
+
+          if (response.ok) {
+            this.innerHTML = `
+              <div style="text-align: center; padding: 40px;">
+                <h3 style="color: var(--accent); margin-bottom: 20px;">Thank You!</h3>
+                <p>Your request has been submitted successfully. We'll contact you within 24 hours to get started on your website.</p>
+              </div>
+            `;
+          } else {
+            throw new Error(result.error || 'Submission failed');
+          }
+        } catch (error) {
+          console.error('Form submission error:', error);
+          alert('There was an error submitting your form. Please try again or contact us directly.');
+
+          submitButton.textContent = originalText;
+          submitButton.disabled = false;
+        }
+      });
     });
+
+    // Check for Stripe redirect parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('success')) {
+      alert('Payment successful! Thank you for your purchase.');
+      // You might want to clear the success parameter from the URL
+      window.history.replaceState({}, document.title, window.location.pathname);
+    } else if (urlParams.get('canceled')) {
+      alert('Payment canceled. You can try again.');
+      // You might want to clear the canceled parameter from the URL
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
   </script>
 </body>
 </html>
