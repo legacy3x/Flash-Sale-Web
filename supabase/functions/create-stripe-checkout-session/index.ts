@@ -1,4 +1,3 @@
-```typescript
 import { createClient } from 'npm:@supabase/supabase-js@2';
 import Stripe from 'npm:stripe@^14.0.0';
 
