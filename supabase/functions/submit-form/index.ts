@@ -26,11 +26,11 @@ Deno.serve(async (req: Request) => {
   const supabaseUrl = Deno.env.get('SUPABASE_URL');
   const supabaseServiceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
 
-  if (!supabaseUrl) {
+  if (!supabaseUrl || supabaseUrl.trim() === '') {
     console.error('Missing SUPABASE_URL environment variable');
     return new Response(
       JSON.stringify({ 
-        error: 'Server configuration error: Missing SUPABASE_URL' 
+        error: 'Server configuration error: SUPABASE_URL is missing or empty' 
       }),
       {
         status: 500,
@@ -39,11 +39,11 @@ Deno.serve(async (req: Request) => {
     );
   }
 
-  if (!supabaseServiceRoleKey) {
+  if (!supabaseServiceRoleKey || supabaseServiceRoleKey.trim() === '') {
     console.error('Missing SUPABASE_SERVICE_ROLE_KEY environment variable');
     return new Response(
       JSON.stringify({ 
-        error: 'Server configuration error: Missing SUPABASE_SERVICE_ROLE_KEY' 
+        error: 'Server configuration error: SUPABASE_SERVICE_ROLE_KEY is missing or empty' 
       }),
       {
         status: 500,
