@@ -85,8 +85,8 @@ Deno.serve(async (req: Request) => {
         },
       ],
       mode: 'payment',
-      success_url: \`${req.headers.get('referer')}?success=true`,
-      cancel_url: \`${req.headers.get('referer')}?canceled=true`,
+      success_url: req.headers.get('referer') + '?success=true',
+      cancel_url: req.headers.get('referer') + '?canceled=true',
     });
 
     return new Response(
