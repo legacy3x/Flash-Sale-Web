@@ -15,11 +15,20 @@ Deno.serve(async (req: Request) => {
   }
 
   try {
+    // Log environment variables to verify they're correctly set
+    const supabaseUrl = Deno.env.get('SUPABASE_URL');
+    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY');
+    
+    console.log('Environment check:');
+    console.log('SUPABASE_URL:', supabaseUrl ? `${supabaseUrl.substring(0, 30)}...` : 'NOT SET');
+    console.log('SUPABASE_ANON_KEY:', supabaseAnonKey ? `${supabaseAnonKey.substring(0, 20)}...` : 'NOT SET');
+
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_ANON_KEY') ?? ''
-    );
+    const supabase = createClient(supabaseUrl ?? '', supabaseAnonKey ?? '');
 
+    console.log('Attempting to fetch flash_sale_config...');
     const { data: config, error: configError } = await supabase
       .from('flash_sale_config')
       .select('*')
@@ -28,7 +37,8 @@ Deno.serve(async (req: Request) => {
       .single();
 
     if (configError || !config) {
-      console.error('Error fetching sale config:', configError);
+      console.error('Error fetching sale config - Full error object:', JSON.stringify(configError, null, 2));
+      console.error('Config data received:', config);
       return new Response(
         JSON.stringify({ error: 'Failed to retrieve sale configuration' }),
         {
@@ -37,6 +47,8 @@ Deno.serve(async (req: Request) => {
         }
       );
     }
+
+    console.log('Successfully fetched config:', JSON.stringify(config, null, 2));
 
     const saleStartTime = new Date(config.sale_start_time);
     const currentTime = new Date();
