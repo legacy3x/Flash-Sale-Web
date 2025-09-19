@@ -95,7 +95,7 @@ Deno.serve(async (req: Request) => {
       currentPrice = originalPrice * (1 - config.price_stage_2_discount);
       priceDescription = `Flash Sale (50% off)`;
     } else if (elapsedHours < totalSaleDurationHours) {
-      currentPrice = originalPrice * (1 - config.price_stage_3_discount);
+      currentPrice = originalPrice * (1 - config.price_3_discount);
       priceDescription = `Flash Sale (25% off)`;
     } else {
       currentPrice = originalPrice;
@@ -145,5 +145,4 @@ Deno.serve(async (req: Request) => {
       }
     );
   }
-}
-)
+});
