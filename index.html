@@ -418,6 +418,8 @@
 
   <div class="container">
     <div class="timer">
+      <div style="font-size: 1.2rem; color: var(--text-secondary); margin-bottom: 10px;">Normally $999.00</div>
+      <div id="current-price-timer" style="font-size: 2.5rem; font-weight: 700; color: var(--text); margin-bottom: 15px;">$249.75</div>
       <div id="discount-display" class="discount-display">75% OFF</div>
       <div class="timer-title">Limited Time Offer</div>
       <div id="countdown" class="countdown-time">48:00:00</div>
@@ -584,10 +586,12 @@
       const timerCtaElement = document.getElementById('timer-cta');
       const currentPriceElement = document.getElementById('current-price');
       const originalPriceDisplayElement = document.getElementById('original-price-display');
+      const currentPriceTimerElement = document.getElementById('current-price-timer');
       const checkoutButton = document.getElementById('checkout-button');
 
       originalPriceDisplayElement.textContent = `Normally $${saleConfig.originalPrice.toFixed(2)}`;
       currentPriceElement.textContent = `$${currentPrice.toFixed(2)}`;
+      currentPriceTimerElement.textContent = `$${currentPrice.toFixed(2)}`;
 
       if (remainingTimeMs <= 0) {
         discountDisplayElement.textContent = "SALE ENDED";
@@ -595,6 +599,7 @@
         countdownElement.textContent = "00:00:00";
         timerCtaElement.textContent = "Sale Has Ended";
         currentPriceElement.textContent = `$${saleConfig.originalPrice.toFixed(2)}`;
+        currentPriceTimerElement.textContent = `$${saleConfig.originalPrice.toFixed(2)}`;
         checkoutButton.disabled = true;
         checkoutButton.textContent = "SALE ENDED";
       } else {
@@ -609,15 +614,15 @@
         if (elapsedHours < saleConfig.stage1Duration) {
           discountDisplayElement.textContent = "75% OFF";
           discountDisplayElement.className = "discount-display";
-          timerCtaElement.textContent = "Claim Your 75% Discount Now!";
+          timerCtaElement.textContent = "Claim your 75% discount Now!";
         } else if (elapsedHours < (saleConfig.stage1Duration + saleConfig.stage2Duration)) {
           discountDisplayElement.textContent = "50% OFF";
           discountDisplayElement.className = "discount-display";
-          timerCtaElement.textContent = "Claim Your 50% Discount Now!";
+          timerCtaElement.textContent = "Claim your 50% discount Now!";
         } else if (elapsedHours < (saleConfig.stage1Duration + saleConfig.stage2Duration + saleConfig.stage3Duration)) {
           discountDisplayElement.textContent = "25% OFF";
           discountDisplayElement.className = "discount-display";
-          timerCtaElement.textContent = "Last Chance - 25% OFF!";
+          timerCtaElement.textContent = "Claim your 25% discount Now!";
         }
         checkoutButton.disabled = false;
         checkoutButton.textContent = "CLAIM YOUR DISCOUNT NOW";
