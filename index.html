@@ -540,49 +540,33 @@
   </footer>
 
   <script>
-    // Simple sale configuration - no external API needed
-    const saleConfig = {
-      originalPrice: 999.00,
-      saleStartTime: new Date('2025-09-19T00:00:00Z'), // Set your sale start time
-      stage1Duration: 12, // hours
-      stage2Duration: 8,  // hours  
-      stage3Duration: 4,  // hours
-      stage1Discount: 0.75, // 75% off
-      stage2Discount: 0.50, // 50% off
-      stage3Discount: 0.25  // 25% off
-    };
+    // Global variables to store sale data
+    let saleData = null;
+    let updateInterval = null;
 
-    function getCurrentPrice() {
-      const currentTime = new Date();
-      const elapsedMs = currentTime.getTime() - saleConfig.saleStartTime.getTime();
-      const elapsedHours = elapsedMs / (1000 * 60 * 60);
-      
-      let currentPrice = saleConfig.originalPrice;
-      
-      if (elapsedHours < saleConfig.stage1Duration) {
-        currentPrice = saleConfig.originalPrice * (1 - saleConfig.stage1Discount);
-      } else if (elapsedHours < (saleConfig.stage1Duration + saleConfig.stage2Duration)) {
-        currentPrice = saleConfig.originalPrice * (1 - saleConfig.stage2Discount);
-      } else if (elapsedHours < (saleConfig.stage1Duration + saleConfig.stage2Duration + saleConfig.stage3Duration)) {
-        currentPrice = saleConfig.originalPrice * (1 - saleConfig.stage3Discount);
+    async function fetchSaleData() {
+      try {
+        const response = await fetch('https://duwkybdmqumkkjrvtpeh.supabase.co/functions/v1/get-current-sale-price');
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        return data;
+      } catch (error) {
+        console.error('Error fetching sale data:', error);
+        // Fallback to default values if API fails
+        return {
+          originalPrice: '999.00',
+          currentPrice: '999.00',
+          discountPercentage: 0,
+          saleEnded: true,
+          remainingSaleTimeHours: 0
+        };
       }
-      
-      return currentPrice;
-    }
-
-    function getRemainingTime() {
-      const currentTime = new Date();
-      const totalDurationMs = (saleConfig.stage1Duration + saleConfig.stage2Duration + saleConfig.stage3Duration) * 60 * 60 * 1000;
-      const saleEndTime = new Date(saleConfig.saleStartTime.getTime() + totalDurationMs);
-      return saleEndTime.getTime() - currentTime.getTime();
     }
 
     function updateUI() {
-      const remainingTimeMs = getRemainingTime();
-      const currentPrice = getCurrentPrice();
-      const currentTime = new Date();
-      const elapsedMs = currentTime.getTime() - saleConfig.saleStartTime.getTime();
-      const elapsedHours = elapsedMs / (1000 * 60 * 60);
+      if (!saleData) return;
       
       const countdownElement = document.getElementById('countdown');
       const discountDisplayElement = document.getElementById('discount-display');
@@ -592,20 +576,21 @@
       const currentPriceTimerElement = document.getElementById('current-price-timer');
       const checkoutButton = document.getElementById('checkout-button');
 
-      originalPriceDisplayElement.textContent = `Normally $${saleConfig.originalPrice.toFixed(2)}`;
-      currentPriceElement.textContent = `$${currentPrice.toFixed(2)}`;
-      currentPriceTimerElement.textContent = `$${currentPrice.toFixed(2)}`;
+      originalPriceDisplayElement.textContent = `Normally $${saleData.originalPrice}`;
+      currentPriceElement.textContent = `$${saleData.currentPrice}`;
+      currentPriceTimerElement.textContent = `$${saleData.currentPrice}`;
 
-      if (remainingTimeMs <= 0) {
+      if (saleData.saleEnded) {
         discountDisplayElement.textContent = "SALE ENDED";
         discountDisplayElement.className = "discount-display sale-ended";
         countdownElement.textContent = "00:00:00";
         timerCtaElement.textContent = "Sale Has Ended";
-        currentPriceElement.textContent = `$${saleConfig.originalPrice.toFixed(2)}`;
-        currentPriceTimerElement.textContent = `$${saleConfig.originalPrice.toFixed(2)}`;
+        currentPriceElement.textContent = `$${saleData.originalPrice}`;
+        currentPriceTimerElement.textContent = `$${saleData.originalPrice}`;
         checkoutButton.disabled = true;
         checkoutButton.textContent = "SALE ENDED";
       } else {
+        const remainingTimeMs = saleData.remainingSaleTimeHours * 60 * 60 * 1000;
         const hours = Math.floor(remainingTimeMs / (1000 * 60 * 60));
         const minutes = Math.floor((remainingTimeMs % (1000 * 60 * 60)) / (1000 * 60));
         const seconds = Math.floor((remainingTimeMs % (1000 * 60)) / 1000);
@@ -613,29 +598,51 @@
         countdownElement.textContent = 
           `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
 
-        // Update discount display based on current stage
-        if (elapsedHours < saleConfig.stage1Duration) {
+        // Update discount display based on current discount percentage
+        if (saleData.discountPercentage >= 75) {
           discountDisplayElement.textContent = "75% OFF";
           discountDisplayElement.className = "discount-display";
           timerCtaElement.textContent = "Claim your 75% discount Now!";
-        } else if (elapsedHours < (saleConfig.stage1Duration + saleConfig.stage2Duration)) {
+        } else if (saleData.discountPercentage >= 50) {
           discountDisplayElement.textContent = "50% OFF";
           discountDisplayElement.className = "discount-display";
           timerCtaElement.textContent = "Claim your 50% discount Now!";
-        } else if (elapsedHours < (saleConfig.stage1Duration + saleConfig.stage2Duration + saleConfig.stage3Duration)) {
+        } else if (saleData.discountPercentage >= 25) {
           discountDisplayElement.textContent = "25% OFF";
           discountDisplayElement.className = "discount-display";
           timerCtaElement.textContent = "Claim your 25% discount Now!";
+        } else {
+          discountDisplayElement.textContent = "SALE ENDING";
+          discountDisplayElement.className = "discount-display";
+          timerCtaElement.textContent = "Last chance to save!";
         }
         checkoutButton.disabled = false;
         checkoutButton.textContent = "CLAIM YOUR DISCOUNT NOW";
       }
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
-      // Initialize UI and start timer
+    document.addEventListener('DOMContentLoaded', async () => {
+      // Fetch initial sale data
+      saleData = await fetchSaleData();
       updateUI();
-      setInterval(updateUI, 1000);
+      
+      // Update sale data every 30 seconds
+      setInterval(async () => {
+        saleData = await fetchSaleData();
+        updateUI();
+      }, 30000);
+      
+      // Update UI every second for countdown
+      setInterval(() => {
+        if (saleData && !saleData.saleEnded) {
+          // Decrease remaining time by 1 second
+          saleData.remainingSaleTimeHours -= (1 / 3600);
+          if (saleData.remainingSaleTimeHours <= 0) {
+            saleData.saleEnded = true;
+          }
+        }
+        updateUI();
+      }, 1000);
 
       // Handle Stripe Checkout button click
       document.getElementById('checkout-button').addEventListener('click', function() {
