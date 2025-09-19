@@ -82,18 +82,72 @@
       margin: 30px auto;
       max-width: 500px;
       box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+      border: 2px solid var(--accent);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .timer::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 107, 53, 0.1), transparent);
+      animation: shimmer 2s infinite;
+    }
+    
+    @keyframes shimmer {
+      0% { left: -100%; }
+      100% { left: 100%; }
+    }
+    
+    .discount-display {
+      font-size: 4rem;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 10px;
+      text-shadow: 0 0 20px rgba(255, 107, 53, 0.5);
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
     }
     
     .timer-title {
-      font-size: 3.5rem;
-      margin-bottom: -25px;
+      font-size: 1.5rem;
+      margin-bottom: 15px;
       color: var(--text);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
     }
     
-    .timer span {
+    .countdown-time {
       color: var(--accent);
-      font-size: 5rem;
+      font-size: 3rem;
       font-weight: 600;
+      font-family: 'Courier New', monospace;
+      text-shadow: 0 0 10px rgba(255, 107, 53, 0.3);
+    }
+    
+    .timer-cta {
+      margin-top: 15px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    .sale-ended {
+      color: #ff4444;
+      font-size: 2.5rem;
+      font-weight: 700;
+      animation: none;
     }
     
     /* Rest of the CSS */
@@ -352,8 +406,10 @@
 
   <div class="container">
     <div class="timer">
-      <div class="timer-title"><strong> Sale Ends</strong></div>
-      <span id="countdown">48:00:00</span>
+      <div id="discount-display" class="discount-display">75% OFF</div>
+      <div class="timer-title">Limited Time Offer</div>
+      <div id="countdown" class="countdown-time">48:00:00</div>
+      <div id="timer-cta" class="timer-cta">Claim Your Discount Now!</div>
     </div>
 
     <section class="section">
@@ -507,8 +563,13 @@
     function updateUI() {
       const remainingTimeMs = getRemainingTime();
       const currentPrice = getCurrentPrice();
+      const currentTime = new Date();
+      const elapsedMs = currentTime.getTime() - saleConfig.saleStartTime.getTime();
+      const elapsedHours = elapsedMs / (1000 * 60 * 60);
       
       const countdownElement = document.getElementById('countdown');
+      const discountDisplayElement = document.getElementById('discount-display');
+      const timerCtaElement = document.getElementById('timer-cta');
       const currentPriceElement = document.getElementById('current-price');
       const originalPriceDisplayElement = document.getElementById('original-price-display');
       const checkoutButton = document.getElementById('checkout-button');
@@ -517,7 +578,10 @@
       currentPriceElement.textContent = `$${currentPrice.toFixed(2)}`;
 
       if (remainingTimeMs <= 0) {
-        countdownElement.textContent = "SALE ENDED!";
+        discountDisplayElement.textContent = "SALE ENDED";
+        discountDisplayElement.className = "discount-display sale-ended";
+        countdownElement.textContent = "00:00:00";
+        timerCtaElement.textContent = "Sale Has Ended";
         currentPriceElement.textContent = `$${saleConfig.originalPrice.toFixed(2)}`;
         checkoutButton.disabled = true;
         checkoutButton.textContent = "SALE ENDED";
@@ -526,9 +590,23 @@
         const minutes = Math.floor((remainingTimeMs % (1000 * 60 * 60)) / (1000 * 60));
         const seconds = Math.floor((remainingTimeMs % (1000 * 60)) / 1000);
 
-        countdownElement.textContent =
+        countdownElement.textContent = 
           `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
 
+        // Update discount display based on current stage
+        if (elapsedHours < saleConfig.stage1Duration) {
+          discountDisplayElement.textContent = "75% OFF";
+          discountDisplayElement.className = "discount-display";
+          timerCtaElement.textContent = "Claim Your 75% Discount Now!";
+        } else if (elapsedHours < (saleConfig.stage1Duration + saleConfig.stage2Duration)) {
+          discountDisplayElement.textContent = "50% OFF";
+          discountDisplayElement.className = "discount-display";
+          timerCtaElement.textContent = "Claim Your 50% Discount Now!";
+        } else if (elapsedHours < (saleConfig.stage1Duration + saleConfig.stage2Duration + saleConfig.stage3Duration)) {
+          discountDisplayElement.textContent = "25% OFF";
+          discountDisplayElement.className = "discount-display";
+          timerCtaElement.textContent = "Last Chance - 25% OFF!";
+        }
         checkoutButton.disabled = false;
         checkoutButton.textContent = "CLAIM YOUR DISCOUNT NOW";
       }
