@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Get Flash Deals on Websites, Design & More | LaunchVaultX</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --dark-bg: #121212;
+      --card-bg: #1e1e1e;
+      --accent: #ff6b35;
+      --text: #f5f5f5;
+      --text-secondary: #b3b3b3;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background-color: var(--dark-bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+    
+    /* Header */
+    .header {
+      background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+      background-size: cover;
+      background-position: center;
+      padding: 130px 0 15px;
+      text-align: center;
+    }
+    
+    .header h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      line-height: 1.2;
+    }
+    
+    .header h1 span {
+      display: block;
+      margin-top: 10px;
+    }
+    
+    .header p {
+      font-size: 1.2rem;
+      max-width: 700px;
+      margin: 0 auto 30px;
+    }
+    
+    .price-highlight {
+      font-weight: 700;
+      color: white;
+    }
+    
+    .original-price {
+      font-size: 1rem;
+      text-decoration: line-through;
+      color: var(--text-secondary);
+    }
+    
+    /* Timer */
+    .timer {
+      background-color: var(--card-bg);
+      padding: 20px;
+      border-radius: 8px;
+      text-align: center;
+      margin: 30px auto;
+      max-width: 500px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+      border: 2px solid var(--accent);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .timer::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 107, 53, 0.1), transparent);
+      animation: shimmer 2s infinite;
+    }
+    
+    @keyframes shimmer {
+      0% { left: -100%; }
+      100% { left: 100%; }
+    }
+    
+    .discount-display {
+      font-size: 4rem;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 10px;
+      text-shadow: 0 0 20px rgba(255, 107, 53, 0.5);
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+    
+    .timer-title {
+      font-size: 1.5rem;
+      margin-bottom: 15px;
+      color: var(--text);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    .countdown-time {
+      color: var(--accent);
+      font-size: 3rem;
+      font-weight: 600;
+      font-family: 'Courier New', monospace;
+      text-shadow: 0 0 10px rgba(255, 107, 53, 0.3);
+    }
+    
+    .timer-cta {
+      margin-top: 15px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    .sale-ended {
+      color: #ff4444;
+      font-size: 2.5rem;
+      font-weight: 700;
+      animation: none;
+    }
+    
+    /* Rest of the CSS */
+    .section {
+      padding: 60px 0;
+    }
+    
+    .section-title {
+      font-size: 2rem;
+      margin-bottom: 40px;
+      margin-top: -55px;
+      text-align: center;
+      position: relative;
+    }
+    
+    .section-title:after {
+      content: '';
+      display: block;
+      width: 80px;
+      height: 4px;
+      background-color: var(--accent);
+      margin: 15px auto 0;
+    }
+    
+    .benefits {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+      margin: 40px 0;
+    }
+    
+    .benefit-card {
+      background-color: var(--card-bg);
+      border-radius: 8px;
+      padding: 30px;
+      transition: transform 0.3s ease;
+    }
+    
+    .benefit-card:hover {
+      transform: translateY(-5px);
+    }
+    
+    .benefit-card h3 {
+      font-size: 1.3rem;
+      margin-bottom: 15px;
+      color: var(--accent);
+    }
+    
+    /* Testimonials grid */
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin: 40px 0;
+    }
+    
+    .testimonial {
+      background-color: var(--card-bg);
+      padding: 30px;
+      border-radius: 8px;
+      position: relative;
+      height: 100%;
+    }
+    
+    .testimonial:before {
+      content: '"';
+      font-size: 5rem;
+      color: var(--accent);
+      opacity: 0.2;
+      position: absolute;
+      top: 10px;
+      left: 20px;
+    }
+    
+    .testimonial p {
+      font-style: italic;
+      margin-bottom: 15px;
+      position: relative;
+      z-index: 1;
+    }
+    
+    .testimonial strong {
+      display: block;
+      color: var(--accent);
+    }
+    
+    .cta-button {
+      display: inline-block;
+      background-color: var(--accent);
+      color: white;
+      padding: 16px 40px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      text-decoration: none;
+      border-radius: 4px;
+      transition: all 0.3s ease;
+      border: none;
+      cursor: pointer;
+    }
+    
+    .cta-button:hover {
+      background-color: #e05a2b;
+      transform: scale(1.03);
+    }
+    
+    .form-container {
+      background-color: var(--card-bg);
+      padding: 40px;
+      border-radius: 8px;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    .form-group input {
+      width: 100%;
+      padding: 15px;
+      background-color: #2a2a2a;
+      border: 1px solid #444;
+      border-radius: 4px;
+      color: var(--text);
+      font-family: inherit;
+    }
+    
+    .form-group input:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+    
+    .text-center {
+      text-align: center;
+    }
+    
+    .mb-40 {
+      margin-bottom: 40px;
+    }
+    
+    .offer-text {
+      font-size: 1.3rem;
+      line-height: 1.6;
+      max-width: 800px;
+      margin: 0 auto 40px;
+    }
+    
+    .offer-text p {
+      margin-bottom: 15px;
+    }
+    
+    .claim-title {
+      margin-top: 0px !important;
+    }
+    
+    /* Logo styles */
+    .logo-container {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      z-index: 10;
+    }
+    
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--text);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1.5rem;
+    }
+    
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--accent), #ff8c42);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 700;
+      font-size: 1.2rem;
+    }
+    
+    /* Footer styles */
+    .footer {
+      background-color: var(--card-bg);
+      padding: 40px 0;
+      text-align: center;
+      border-top: 1px solid #333;
+    }
+    
+    .footer p {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      margin-bottom: 10px;
+    }
+    
+    .footer a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    
+    .footer a:hover {
+      text-decoration: underline;
+    }
+    
+    @media (max-width: 768px) {
+      .header h1 {
+        font-size: 2rem;
+      }
+      
+      .header p {
+        font-size: 1rem;
+      }
+      
+      .testimonials-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .offer-text {
+        font-size: 1.1rem;
+        margin: 0 auto 0px;
+      }
+      
+      .logo {
+        font-size: 1.2rem;
+      }
+      
+      .logo-icon {
+        width: 32px;
+        height: 32px;
+        font-size: 1rem;
+      }
+      
+      .discount-display {
+        font-size: 2.5rem;
+      }
+      
+      .countdown-time {
+        font-size: 2rem;
+      }
+      
+      .timer-cta {
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="logo-container">
+    <a href="#" class="logo">
+      <div class="logo-icon">LV</div>
+      <span>LaunchVaultX</span>
+    </a>
+  </div>
+  
+  <header class="header">
+    <div class="container">
+      <h1>48-HOUR FLASH SALE<br><span>Get Your Business Online for 75% OFF</span></h1>
+      <h1>Professional one-page website</h1>
+      <p><span class="original-price" id="original-price-display"></span> <strong id="current-price"></strong></p>
+      <button id="checkout-button" class="cta-button">CLAIM YOUR DISCOUNT NOW</button>
+      <p style="font-size: 1.0rem; color: var(--text-secondary); margin-top: 35px; text-align: center; line-height: 1.1;">
+        75% off the first 12 hours • 50% off the next 8 hours • 25% off the remaining 4 hours
+      </p>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="timer">
+      <div style="font-size: 1.2rem; color: var(--text-secondary); margin-bottom: 10px;">Normally $999.00</div>
+      <div id="current-price-timer" style="font-size: 2.5rem; font-weight: 700; color: var(--text); margin-bottom: 15px;">$249.75</div>
+      <div id="discount-display" class="discount-display">75% OFF</div>
+      <div class="timer-title">Limited Time Offer</div>
+      <div id="countdown" class="countdown-time">48:00:00</div>
+      <div id="timer-cta" class="timer-cta">Claim Your Discount Now!</div>
+    </div>
+
+    <section class="section">
+      <h2 class="section-title">Stop Losing Customers Without a Website</h2>
+      <p class="text-center mb-40">In today's digital world, <strong>84% of consumers research online before making a purchase</strong>.<br>
+      Without a website, you're invisible to most potential customers.</p>
+
+      <div class="benefits">
+        <div class="benefit-card">
+          <h3>⚡ Get Online in 24 Hours</h3>
+          <p>While competitors take weeks, we'll have your professional site live in just one business day.</p>
+        </div>
+        <div class="benefit-card">
+          <h3>💰 ROI Guaranteed</h3>
+          <p>Most clients see their investment returned through new leads within the first month.</p>
+        </div>
+        <div class="benefit-card">
+          <h3>🛡️ Risk-Free</h3>
+          <p>100% satisfaction guarantee - if you're not happy, we'll refund every penny.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">What You Get</h2>
+      <div class="benefits">
+        <div class="benefit-card">
+          <h3>✅ Custom Design</h3>
+          <p>Tailored to fit your brand's style and color scheme.</p>
+        </div>
+        <div class="benefit-card">
+          <h3>✅ Responsive Layout</h3>
+          <p>Ensures your site looks great on both desktops and mobile devices.</p>
+        </div>
+        <div class="benefit-card">
+          <h3>✅ Lead Generation</h3>
+          <p>Contact form that delivers leads straight to your inbox</p>
+        </div>
+        <div class="benefit-card">
+          <h3>✅ Social Integration</h3>
+          <p>Seamless connection to your social media profiles</p>
+        </div>
+        <div class="benefit-card">
+          <h3>✅ SEO Optimization</h3>
+          <p>Basic search engine optimization to help you get found</p>
+        </div>
+        <div class="benefit-card">
+          <h3>✅ Personal Support</h3>
+          <p>2 rounds of revisions + 30-minute strategy call</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">Client Success Stories</h2>
+      <div class="testimonials-grid">
+        <div class="testimonial">
+          <p>I got my first 3 clients through my new website within a week! The investment paid for itself immediately.</p>
+          <strong>- Sarah K., Life Coach</strong>
+        </div>
+        <div class="testimonial">
+          <p>As a busy contractor, I didn't have time to build a site. This service saved me dozens of hours and looks professional.</p>
+          <strong>- Mike T., Home Renovations</strong>
+        </div>
+        <div class="testimonial">
+          <p>My website converted 3x better than my old DIY version. The clean design makes my small business look established.</p>
+          <strong>- Lisa M., Handmade Jewelry</strong>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">Why This Offer Won't Last</h2>
+      <div class="offer-text text-center">
+        <p>We're offering this <strong>75% discount for just 48 hours</strong> to help small businesses or individuals get online quickly.</p>
+        <p>At this price, we can only accept 15 new clients.</p>
+      </div>
+    </section>
+
+    <section id="order" class="section">
+      <div class="form-container">
+        <h2 class="section-title claim-title">Claim Your Discount</h2>
+        <p class="text-center mb-40">Claim your 75% discount before time runs out:</p>
+        
+        <form id="contact-form">
+          <div class="form-group">
+            <input type="text" name="name" placeholder="Your Name" required>
+          </div>
+          <div class="form-group">
+            <input type="email" name="email" placeholder="Email Address" required>
+          </div>
+          <div class="form-group">
+            <input type="tel" name="phone" placeholder="Phone Number">
+          </div>
+          <div class="form-group">
+            <textarea name="website_description" placeholder="Tell us what your website should be about (your business, services, target audience, etc.)" rows="4" style="width: 100%; padding: 15px; background-color: #2a2a2a; border: 1px solid #444; border-radius: 4px; color: var(--text); font-family: inherit; resize: vertical; min-height: 100px;" required></textarea>
+          </div>
+          <div class="text-center">
+            <button type="submit" class="cta-button">SECURE MY DISCOUNT NOW</button>
+          </div>
+        </form>
+        <p style="font-size: 14px; margin-top: 20px; text-align: center; color: var(--text-secondary);">Your information is 100% secure. We will never spam you.</p>
+      </div>
+    </section>
+  </div>
+
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2025 LaunchVaultX.com. All rights reserved. LaunchVaultX.com is a division of <a href="https://legacy3x.com" target="_blank">Legacy3x.com</a></p>
+    </div>
+  </footer>
+
+  <script>
+    // Simple sale configuration - no external API needed
+    const saleConfig = {
+      originalPrice: 999.00,
+      saleStartTime: new Date('2025-09-19T00:00:00Z'), // Set your sale start time
+      stage1Duration: 12, // hours
+      stage2Duration: 8,  // hours  
+      stage3Duration: 4,  // hours
+      stage1Discount: 0.75, // 75% off
+      stage2Discount: 0.50, // 50% off
+      stage3Discount: 0.25  // 25% off
+    };
+
+    function getCurrentPrice() {
+      const currentTime = new Date();
+      const elapsedMs = currentTime.getTime() - saleConfig.saleStartTime.getTime();
+      const elapsedHours = elapsedMs / (1000 * 60 * 60);
+      
+      let currentPrice = saleConfig.originalPrice;
+      
+      if (elapsedHours < saleConfig.stage1Duration) {
+        currentPrice = saleConfig.originalPrice * (1 - saleConfig.stage1Discount);
+      } else if (elapsedHours < (saleConfig.stage1Duration + saleConfig.stage2Duration)) {
+        currentPrice = saleConfig.originalPrice * (1 - saleConfig.stage2Discount);
+      } else if (elapsedHours < (saleConfig.stage1Duration + saleConfig.stage2Duration + saleConfig.stage3Duration)) {
+        currentPrice = saleConfig.originalPrice * (1 - saleConfig.stage3Discount);
+      }
+      
+      return currentPrice;
+    }
+
+    function getRemainingTime() {
+      const currentTime = new Date();
+      const totalDurationMs = (saleConfig.stage1Duration + saleConfig.stage2Duration + saleConfig.stage3Duration) * 60 * 60 * 1000;
+      const saleEndTime = new Date(saleConfig.saleStartTime.getTime() + totalDurationMs);
+      return saleEndTime.getTime() - currentTime.getTime();
+    }
+
+    function updateUI() {
+      const remainingTimeMs = getRemainingTime();
+      const currentPrice = getCurrentPrice();
+      const currentTime = new Date();
+      const elapsedMs = currentTime.getTime() - saleConfig.saleStartTime.getTime();
+      const elapsedHours = elapsedMs / (1000 * 60 * 60);
+      
+      const countdownElement = document.getElementById('countdown');
+      const discountDisplayElement = document.getElementById('discount-display');
+      const timerCtaElement = document.getElementById('timer-cta');
+      const currentPriceElement = document.getElementById('current-price');
+      const originalPriceDisplayElement = document.getElementById('original-price-display');
+      const currentPriceTimerElement = document.getElementById('current-price-timer');
+      const checkoutButton = document.getElementById('checkout-button');
+
+      originalPriceDisplayElement.textContent = `Normally $${saleConfig.originalPrice.toFixed(2)}`;
+      currentPriceElement.textContent = `$${currentPrice.toFixed(2)}`;
+      currentPriceTimerElement.textContent = `$${currentPrice.toFixed(2)}`;
+
+      if (remainingTimeMs <= 0) {
+        discountDisplayElement.textContent = "SALE ENDED";
+        discountDisplayElement.className = "discount-display sale-ended";
+        countdownElement.textContent = "00:00:00";
+        timerCtaElement.textContent = "Sale Has Ended";
+        currentPriceElement.textContent = `$${saleConfig.originalPrice.toFixed(2)}`;
+        currentPriceTimerElement.textContent = `$${saleConfig.originalPrice.toFixed(2)}`;
+        checkoutButton.disabled = true;
+        checkoutButton.textContent = "SALE ENDED";
+      } else {
+        const hours = Math.floor(remainingTimeMs / (1000 * 60 * 60));
+        const minutes = Math.floor((remainingTimeMs % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((remainingTimeMs % (1000 * 60)) / 1000);
+
+        countdownElement.textContent = 
+          `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+        // Update discount display based on current stage
+        if (elapsedHours < saleConfig.stage1Duration) {
+          discountDisplayElement.textContent = "75% OFF";
+          discountDisplayElement.className = "discount-display";
+          timerCtaElement.textContent = "Claim your 75% discount Now!";
+        } else if (elapsedHours < (saleConfig.stage1Duration + saleConfig.stage2Duration)) {
+          discountDisplayElement.textContent = "50% OFF";
+          discountDisplayElement.className = "discount-display";
+          timerCtaElement.textContent = "Claim your 50% discount Now!";
+        } else if (elapsedHours < (saleConfig.stage1Duration + saleConfig.stage2Duration + saleConfig.stage3Duration)) {
+          discountDisplayElement.textContent = "25% OFF";
+          discountDisplayElement.className = "discount-display";
+          timerCtaElement.textContent = "Claim your 25% discount Now!";
+        }
+        checkoutButton.disabled = false;
+        checkoutButton.textContent = "CLAIM YOUR DISCOUNT NOW";
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // Initialize UI and start timer
+      updateUI();
+      setInterval(updateUI, 1000);
+
+      // Handle Stripe Checkout button click
+      document.getElementById('checkout-button').addEventListener('click', function() {
+        // Scroll to the form section at the bottom of the page
+        document.getElementById('order').scrollIntoView({ 
+          behavior: 'smooth' 
+        });
+      });
+
+      // Handle form submission for contact form (separate from Stripe)
+      // This part remains largely the same as before, but ensure it's distinct from the checkout button
+      document.getElementById('contact-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const submitButton = this.querySelector('button[type="submit"]');
+        const originalText = submitButton.textContent;
+
+        submitButton.textContent = 'SUBMITTING...';
+        submitButton.disabled = true;
+
+        try {
+          const formData = new FormData(this);
+
+          const response = await fetch(`https://duwkybdmqumkkjrvtpeh.supabase.co/functions/v1/submit-form`, {
+            method: 'POST',
+            body: formData,
+          });
+
+          const result = await response.json();
+
+          if (response.ok) {
+            // Form submitted successfully, now open Stripe checkout
+            submitButton.textContent = 'OPENING CHECKOUT...';
+            
+            try {
+              const checkoutResponse = await fetch(`https://duwkybdmqumkkjrvtpeh.supabase.co/functions/v1/create-stripe-checkout-session`, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  customerEmail: formData.get('email'),
+                  customerName: formData.get('name')
+                }),
+              });
+
+              const checkoutResult = await checkoutResponse.json();
+
+              if (checkoutResponse.ok && checkoutResult.url) {
+                // Redirect to Stripe Checkout
+                window.location.href = checkoutResult.url;
+              } else {
+                throw new Error(checkoutResult.error || 'Failed to create checkout session');
+              }
+            } catch (checkoutError) {
+              console.error('Checkout error:', checkoutError);
+              
+              // Show success message for form submission but inform about checkout issue
+              this.innerHTML = `
+                <div style="text-align: center; padding: 40px;">
+                  <h3 style="color: var(--accent); margin-bottom: 20px;">Form Submitted Successfully!</h3>
+                  <p style="margin-bottom: 20px;">Your request has been submitted. However, there was an issue opening the checkout.</p>
+                  <p style="margin-bottom: 20px;">Please contact us directly to complete your purchase at the discounted price.</p>
+                  <button onclick="location.reload()" class="cta-button">Try Checkout Again</button>
+                </div>
+              `;
+            }
+          } else {
+            throw new Error(result.error || 'Submission failed');
+          }
+        } catch (error) {
+          console.error('Form submission error:', error);
+          alert('There was an error submitting your form. Please try again or contact us directly.');
+
+          submitButton.textContent = originalText;
+          submitButton.disabled = false;
+        }
+      });
+    });
+
+    // Check for Stripe redirect parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('success')) {
+      alert('Payment successful! Thank you for your purchase.');
+      // You might want to clear the success parameter from the URL
+      window.history.replaceState({}, document.title, window.location.pathname);
+    } else if (urlParams.get('canceled')) {
+      alert('Payment canceled. You can try again.');
+      // You might want to clear the canceled parameter from the URL
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  </script>
+</body>
+</html>
