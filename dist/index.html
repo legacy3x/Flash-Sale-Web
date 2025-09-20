@@ -358,6 +358,38 @@
     }
     
     @media (max-width: 768px) {
+      .anticipation-content {
+        padding: 20px;
+        max-width: 90%;
+      }
+      
+      .anticipation-logo {
+        font-size: 1.8rem;
+        margin-bottom: 30px;
+      }
+      
+      .anticipation-logo .logo-icon {
+        width: 50px;
+        height: 50px;
+        font-size: 1.4rem;
+      }
+      
+      .anticipation-main {
+        font-size: 1.1rem;
+      }
+      
+      .anticipation-offer {
+        font-size: 1rem;
+      }
+      
+      .anticipation-features p {
+        font-size: 0.95rem;
+      }
+      
+      .anticipation-cta {
+        font-size: 0.9rem;
+      }
+      
       .header h1 {
         font-size: 2rem;
       }
@@ -397,9 +429,152 @@
         font-size: 1rem;
       }
     }
+    
+    /* Anticipation Screen Styles */
+    .anticipation-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(18, 18, 18, 0.95);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      animation: fadeIn 0.5s ease-in-out;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    .anticipation-content {
+      text-align: center;
+      max-width: 600px;
+      padding: 40px;
+      background: rgba(30, 30, 30, 0.9);
+      border-radius: 16px;
+      border: 2px solid var(--accent);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .anticipation-content::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 107, 53, 0.1), transparent);
+      animation: shimmer 3s infinite;
+    }
+    
+    .anticipation-logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+      color: var(--text);
+      font-weight: 600;
+      font-size: 2.2rem;
+      margin-bottom: 40px;
+      position: relative;
+      z-index: 1;
+    }
+    
+    .anticipation-logo .logo-icon {
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, var(--accent), #ff8c42);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 700;
+      font-size: 1.6rem;
+      box-shadow: 0 8px 20px rgba(255, 107, 53, 0.3);
+    }
+    
+    .anticipation-text {
+      position: relative;
+      z-index: 1;
+    }
+    
+    .anticipation-main {
+      font-size: 1.3rem;
+      line-height: 1.5;
+      margin-bottom: 30px;
+      color: var(--text);
+      font-weight: 500;
+    }
+    
+    .anticipation-offer {
+      font-size: 1.2rem;
+      line-height: 1.4;
+      margin-bottom: 30px;
+      color: var(--accent);
+      font-weight: 600;
+    }
+    
+    .anticipation-features {
+      margin: 30px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    
+    .anticipation-features p {
+      font-size: 1.1rem;
+      color: var(--text);
+      font-weight: 500;
+      margin: 0;
+    }
+    
+    .anticipation-cta {
+      font-size: 1rem;
+      line-height: 1.4;
+      color: var(--text-secondary);
+      font-weight: 400;
+      margin-top: 30px;
+    }
   </style>
 </head>
 <body>
+  <!-- Anticipation Screen Overlay -->
+  <div id="anticipation-screen" class="anticipation-overlay">
+    <div class="anticipation-content">
+      <div class="anticipation-logo">
+        <div class="logo-icon">LV</div>
+        <span>LaunchVaultX</span>
+      </div>
+      
+      <div class="anticipation-text">
+        <p class="anticipation-main">👀 We're about to shake up the internet.<br>
+        Meet LaunchVaultX.com – your flash sale portal for next-level digital deals.</p>
+        
+        <p class="anticipation-offer">💻 First drop: Normally $999.<br>
+        This Tuesday: You won't believe the price.</p>
+        
+        <div class="anticipation-features">
+          <p>✅ Only 1 product.</p>
+          <p>✅ 24 hours.</p>
+          <p>✅ Up to 75% OFF.</p>
+        </div>
+        
+       
+        <p class="anticipation-cta">Follow us <a href="https://www.instagram.com/legacy.3x/" target="_blank" style="color: var(--accent); text-decoration: none;">@legacy3X</a> & set your reminders.<br>
+        Something BIG is coming to LaunchVaultX.</p>
+      </div>
+    </div>
+  </div>
+
   <div class="logo-container">
     <a href="#" class="logo">
       <div class="logo-icon">LV</div>
@@ -574,6 +749,7 @@
     function updateUI() {
       if (!saleData) return;
       
+      const anticipationScreen = document.getElementById('anticipation-screen');
       const countdownElement = document.getElementById('countdown');
       const discountDisplayElement = document.getElementById('discount-display');
       const timerCtaElement = document.getElementById('timer-cta');
@@ -585,6 +761,15 @@
       originalPriceDisplayElement.textContent = `Normally $${saleData.originalPrice}`;
       currentPriceElement.textContent = `$${saleData.currentPrice}`;
       currentPriceTimerElement.textContent = `$${saleData.currentPrice}`;
+      
+      // Show/hide anticipation screen based on sale status
+      if (saleData.saleEnded) {
+        // Sale has ended - show anticipation screen
+        anticipationScreen.style.display = 'flex';
+      } else {
+        // Sale is running - hide anticipation screen
+        anticipationScreen.style.display = 'none';
+      }
 
       if (saleData.saleEnded) {
         discountDisplayElement.textContent = "SALE ENDED";
