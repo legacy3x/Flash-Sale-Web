@@ -1,4 +1,5 @@
 import { createClient } from 'npm:@supabase/supabase-js@2';
+import { Resend } from 'npm:resend@3.2.0';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -25,6 +26,8 @@ Deno.serve(async (req: Request) => {
   // Check for required environment variables
   const supabaseUrl = Deno.env.get('SUPABASE_URL');
   const supabaseServiceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+  const resendApiKey = Deno.env.get('RESEND_API_KEY');
+  const notificationEmail = Deno.env.get('NOTIFICATION_EMAIL');
 
   if (!supabaseUrl || supabaseUrl.trim() === '') {
     console.error('Missing SUPABASE_URL environment variable');
@@ -44,6 +47,32 @@ Deno.serve(async (req: Request) => {
     return new Response(
       JSON.stringify({ 
         error: 'Server configuration error: SUPABASE_SERVICE_ROLE_KEY is missing or empty' 
+      }),
+      {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      }
+    );
+  }
+
+  if (!resendApiKey || resendApiKey.trim() === '') {
+    console.error('Missing RESEND_API_KEY environment variable');
+    return new Response(
+      JSON.stringify({ 
+        error: 'Server configuration error: RESEND_API_KEY is missing or empty' 
+      }),
+      {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      }
+    );
+  }
+
+  if (!notificationEmail || notificationEmail.trim() === '') {
+    console.error('Missing NOTIFICATION_EMAIL environment variable');
+    return new Response(
+      JSON.stringify({ 
+        error: 'Server configuration error: NOTIFICATION_EMAIL is missing or empty' 
       }),
       {
         status: 500,
@@ -112,6 +141,9 @@ Deno.serve(async (req: Request) => {
     console.log('SUPABASE_URL:', Deno.env.get('SUPABASE_URL') ? 'Set' : 'Missing');
     console.log('SUPABASE_SERVICE_ROLE_KEY:', Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ? 'Set' : 'Missing');
 
+    // Initialize Resend client
+    const resend = new Resend(resendApiKey);
+
     // Insert form submission into database
     const { data, error } = await supabase
       .from('form_submissions')
@@ -142,6 +174,34 @@ Deno.serve(async (req: Request) => {
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         }
       );
+    }
+
+    // Send email notification
+    try {
+      const emailSubject = `New Website Request from ${submission.name}`;
+      const emailHtml = `
+        <h2>New Website Request Submission</h2>
+        <p><strong>Name:</strong> ${submission.name}</p>
+        <p><strong>Email:</strong> ${submission.email}</p>
+        <p><strong>Phone:</strong> ${submission.phone || 'Not provided'}</p>
+        <p><strong>Website Description:</strong></p>
+        <p>${submission.website_description}</p>
+        <hr>
+        <p><small>Submitted at: ${new Date().toISOString()}</small></p>
+        <p><small>Submission ID: ${data.id}</small></p>
+      `;
+
+      await resend.emails.send({
+        from: 'noreply@yourdomain.com', // Replace with your verified domain
+        to: notificationEmail,
+        subject: emailSubject,
+        html: emailHtml,
+      });
+
+      console.log('Email notification sent successfully');
+    } catch (emailError) {
+      console.error('Failed to send email notification:', emailError);
+      // Don't fail the entire request if email fails - the form submission was successful
     }
 
     // Return success response
