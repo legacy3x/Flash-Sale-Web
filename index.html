@@ -762,11 +762,11 @@
       currentPriceTimerElement.textContent = `$${saleData.currentPrice}`;
       
       // Show/hide anticipation screen based on sale status
-      if (saleData.elapsedHours < 0) {
-        // Sale hasn't started yet - show anticipation screen
+      if (saleData.saleEnded) {
+        // Sale has ended - show anticipation screen
         anticipationScreen.style.display = 'flex';
       } else {
-        // Sale has started or ended - hide anticipation screen
+        // Sale is running - hide anticipation screen
         anticipationScreen.style.display = 'none';
       }
 
